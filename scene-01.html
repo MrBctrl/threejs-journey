@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My 3D Scene</title>
+  <style> body { margin: 0; background: #050D1A; } </style>
+</head>
+<body>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <script>
+    // SCENE SETUP
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x050D1A);
+
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 1, 5);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.shadowMap.enabled = true;
+    document.body.appendChild(renderer.domElement);
+
+    // ORBIT CONTROLS — click and drag to rotate
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+
+    // LIGHTS
+    const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+    dirLight.position.set(5, 5, 5);
+    dirLight.castShadow = true;
+    scene.add(dirLight);
+
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+    scene.add(ambientLight);
+
+    // SHAPE 1 — your green cube
+    const cubeGeo = new THREE.BoxGeometry(1, 1, 1);
+    const cubeMat = new THREE.MeshStandardMaterial({ color: 0x1B5E20 });
+    const cube = new THREE.Mesh(cubeGeo, cubeMat);
+    cube.position.x = -1.5;
+    cube.castShadow = true;
+    scene.add(cube);
+
+
+    // SHAPE 2 — a blue sphere
+    const sphereGeo = new THREE.SphereGeometry(0.7, 32, 32);
+    const sphereMat = new THREE.MeshStandardMaterial({ color: 0x2196F3 });
+    const sphere = new THREE.Mesh(sphereGeo, sphereMat);
+    sphere.position.x = 1.5;
+    sphere.castShadow = true;
+    scene.add(sphere);
+
+    // SHAPE 3 — an orange sphere
+    const sphereGeo2 = new THREE.SphereGeometry(0.5, 32, 32);
+    const sphereMat2 = new THREE.MeshStandardMaterial({ color: 0xFF5722 });
+    const sphere2 = new THREE.Mesh(sphereGeo2, sphereMat2);
+    sphere2.position.x = 0.0;
+    sphere2.castShadow = true;
+    scene.add(sphere2);
+
+    // FLOOR — so shadows land on something
+    const floorGeo = new THREE.PlaneGeometry(10, 10);
+    const floorMat = new THREE.MeshStandardMaterial({ color: 0x111122 });
+    const floor = new THREE.Mesh(floorGeo, floorMat);
+    floor.rotation.x = -Math.PI / 2;
+    floor.position.y = -1;
+    floor.receiveShadow = true;
+    scene.add(floor);
+
+    // ANIMATE
+    function animate() {
+      requestAnimationFrame(animate);
+      cube.rotation.x += 0.008;
+      cube.rotation.y += 0.008;
+      sphere.rotation.y += 0.01;
+      sphere2.rotation.y += 0.08;
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    // RESPONSIVE
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  </script>
+</body>
+</html>
